@@ -1,0 +1,199 @@
+openapi: 3.0.0
+info:
+  title: API de Controle de Estoque
+  version: 1.0.0
+  description: API REST para gerenciamento de produtos, categorias e movimentações de estoque.
+
+tags:
+  - name: Produtos
+    description: Operações relacionadas a produtos
+  - name: Categorias
+    description: Operações relacionadas a categorias de produtos
+  - name: Estoque
+    description: Operações de movimentação de estoque
+
+paths:
+  /products:
+    get:
+      tags: [Produtos]
+      summary: Lista todos os produtos
+      responses:
+        '200':
+          description: Lista de produtos
+    post:
+      tags: [Produtos]
+      summary: Cria um novo produto
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, quantity]
+              properties:
+                name:
+                  type: string
+                quantity:
+                  type: integer
+                categoryId:
+                  type: integer
+      responses:
+        '201':
+          description: Produto criado
+
+  /products/{id}:
+    get:
+      tags: [Produtos]
+      summary: Retorna um produto específico
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Produto encontrado
+        '404':
+          description: Produto não encontrado
+    put:
+      tags: [Produtos]
+      summary: Atualiza um produto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, quantity]
+              properties:
+                name:
+                  type: string
+                quantity:
+                  type: integer
+                categoryId:
+                  type: integer
+      responses:
+        '200':
+          description: Produto atualizado
+    delete:
+      tags: [Produtos]
+      summary: Remove um produto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Produto removido
+
+  /categories:
+    get:
+      tags: [Categorias]
+      summary: Lista todas as categorias
+      responses:
+        '200':
+          description: Lista de categorias
+    post:
+      tags: [Categorias]
+      summary: Cria uma nova categoria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        '201':
+          description: Categoria criada
+
+  /categories/{id}:
+    get:
+      tags: [Categorias]
+      summary: Retorna uma categoria específica
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Categoria encontrada
+        '404':
+          description: Categoria não encontrada
+    put:
+      tags: [Categorias]
+      summary: Atualiza uma categoria
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Categoria atualizada
+    delete:
+      tags: [Categorias]
+      summary: Remove uma categoria
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Categoria removida
+
+  /stock:
+    get:
+      tags: [Estoque]
+      summary: Lista todos os registros de estoque
+      responses:
+        '200':
+          description: Lista de movimentações
+    post:
+      tags: [Estoque]
+      summary: Cria uma movimentação de estoque
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [productId, type, quantity]
+              properties:
+                productId:
+                  type: integer
+                type:
+                  type: string
+                  enum: [in, out]
+                quantity:
+                  type: integer
+      responses:
+        '201':
+          description: Movimentação registrada
