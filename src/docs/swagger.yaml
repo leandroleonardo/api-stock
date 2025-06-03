@@ -42,6 +42,12 @@ paths:
                 supplierId:
                   type: integer
                   nullable: true
+                image:
+                  type: string
+                  description: URL ou base64 da imagem do produto
+                description:
+                  type: string
+                  description: Descrição do produto
       responses:
         '201':
           description: Produto criado
@@ -87,6 +93,12 @@ paths:
                 supplierId:
                   type: integer
                   nullable: true
+                image:
+                  type: string
+                  description: URL ou base64 da imagem do produto
+                description:
+                  type: string
+                  description: Descrição do produto
       responses:
         '200':
           description: Produto atualizado

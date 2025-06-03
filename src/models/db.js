@@ -24,6 +24,8 @@ db.serialize(() => {
       quantity INTEGER NOT NULL,
       categoryId INTEGER NOT NULL,
       supplierId INTEGER,
+      image TEXT,
+      description TEXT,
       FOREIGN KEY(categoryId) REFERENCES categories(id),
       FOREIGN KEY(supplierId) REFERENCES suppliers(id)
     )
