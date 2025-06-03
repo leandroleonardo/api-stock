@@ -10,12 +10,22 @@ db.serialize(() => {
   `);
 
   db.run(`
+    CREATE TABLE suppliers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      contact TEXT
+    )
+  `);
+
+  db.run(`
     CREATE TABLE products (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       quantity INTEGER NOT NULL,
-      categoryId INTEGER,
-      FOREIGN KEY(categoryId) REFERENCES categories(id)
+      categoryId INTEGER NOT NULL,
+      supplierId INTEGER,
+      FOREIGN KEY(categoryId) REFERENCES categories(id),
+      FOREIGN KEY(supplierId) REFERENCES suppliers(id)
     )
   `);
 

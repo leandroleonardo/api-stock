@@ -11,6 +11,8 @@ tags:
     description: Operações relacionadas a categorias de produtos
   - name: Estoque
     description: Operações de movimentação de estoque
+  - name: Fornecedores
+    description: Operações relacionadas a fornecedores
 
 paths:
   /products:
@@ -29,7 +31,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [name, quantity]
+              required: [name, quantity, categoryId]
               properties:
                 name:
                   type: string
@@ -37,6 +39,9 @@ paths:
                   type: integer
                 categoryId:
                   type: integer
+                supplierId:
+                  type: integer
+                  nullable: true
       responses:
         '201':
           description: Produto criado
@@ -71,7 +76,7 @@ paths:
           application/json:
             schema:
               type: object
-              required: [name, quantity]
+              required: [name, quantity, categoryId]
               properties:
                 name:
                   type: string
@@ -79,9 +84,14 @@ paths:
                   type: integer
                 categoryId:
                   type: integer
+                supplierId:
+                  type: integer
+                  nullable: true
       responses:
         '200':
           description: Produto atualizado
+        '404':
+          description: Produto não encontrado
     delete:
       tags: [Produtos]
       summary: Remove um produto
@@ -197,3 +207,85 @@ paths:
       responses:
         '201':
           description: Movimentação registrada
+
+  /suppliers:
+    get:
+      tags: [Fornecedores]
+      summary: Lista todos os fornecedores
+      responses:
+        '200':
+          description: Lista de fornecedores
+    post:
+      tags: [Fornecedores]
+      summary: Cria um novo fornecedor
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                contact:
+                  type: string
+      responses:
+        '201':
+          description: Fornecedor criado
+
+  /suppliers/{id}:
+    get:
+      tags: [Fornecedores]
+      summary: Retorna um fornecedor específico
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Fornecedor encontrado
+        '404':
+          description: Fornecedor não encontrado
+    put:
+      tags: [Fornecedores]
+      summary: Atualiza um fornecedor
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                contact:
+                  type: string
+      responses:
+        '200':
+          description: Fornecedor atualizado
+        '404':
+          description: Fornecedor não encontrado
+    delete:
+      tags: [Fornecedores]
+      summary: Remove um fornecedor
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Fornecedor removido
+        '404':
+          description: Fornecedor não encontrado

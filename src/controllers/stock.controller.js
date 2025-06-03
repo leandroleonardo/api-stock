@@ -1,18 +1,30 @@
 const db = require('../models/db');
 
 exports.getAll = (req, res) => {
-  db.all('SELECT * FROM stock', (err, rows) => {
-    if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
-  });
+  db.all(
+    `SELECT stock.*, products.supplierId 
+     FROM stock 
+     LEFT JOIN products ON stock.productId = products.id`,
+    (err, rows) => {
+      if (err) return res.status(500).json({ error: err.message });
+      res.json(rows);
+    }
+  );
 };
 
 exports.getById = (req, res) => {
-  db.get('SELECT * FROM stock WHERE id = ?', [req.params.id], (err, row) => {
-    if (err) return res.status(500).json({ error: err.message });
-    if (!row) return res.status(404).json({ error: 'Registro de estoque não encontrado' });
-    res.json(row);
-  });
+  db.get(
+    `SELECT stock.*, products.supplierId 
+     FROM stock 
+     LEFT JOIN products ON stock.productId = products.id
+     WHERE stock.id = ?`,
+    [req.params.id],
+    (err, row) => {
+      if (err) return res.status(500).json({ error: err.message });
+      if (!row) return res.status(404).json({ error: 'Registro de estoque não encontrado' });
+      res.json(row);
+    }
+  );
 };
 
 exports.create = (req, res) => {
