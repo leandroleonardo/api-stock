@@ -117,6 +117,64 @@ paths:
         '200':
           description: Produto removido
 
+  /products/{id}/add-stock:
+    post:
+      tags: [Produtos]
+      summary: Adiciona quantidade ao estoque de um produto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                quantity:
+                  type: integer
+                  description: Quantidade a ser adicionada
+      responses:
+        '200':
+          description: Quantidade adicionada ao produto
+        '400':
+          description: Erro de validação
+        '404':
+          description: Produto não encontrado
+
+  /products/{id}/remove-stock:
+    post:
+      tags: [Produtos]
+      summary: Remove quantidade do estoque de um produto
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [quantity]
+              properties:
+                quantity:
+                  type: integer
+                  description: Quantidade a ser removida
+      responses:
+        '200':
+          description: Quantidade removida do produto
+        '400':
+          description: Erro de validação ou quantidade insuficiente
+        '404':
+          description: Produto não encontrado
+
   /categories:
     get:
       tags: [Categorias]
