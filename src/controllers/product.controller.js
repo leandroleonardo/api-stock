@@ -2,9 +2,30 @@ const db = require('../models/db');
 const stockController = require('./stock.controller'); // Importa o controller de estoque
 
 exports.getAll = (req, res) => {
-  db.all('SELECT * FROM products', (err, rows) => {
+  // Parâmetros de paginação
+  const page = parseInt(req.query.page) || 1;
+  const per_page = parseInt(req.query.per_page) || 10;
+  const offset = (page - 1) * per_page;
+
+  // Conta o total de registros
+  db.get('SELECT COUNT(*) as total FROM products', (err, countResult) => {
     if (err) return res.status(500).json({ error: err.message });
-    res.json(rows);
+
+    const total = countResult.total;
+    const total_pages = Math.ceil(total / per_page);
+
+    // Busca os dados paginados
+    db.all('SELECT * FROM products LIMIT ? OFFSET ?', [per_page, offset], (err2, rows) => {
+      if (err2) return res.status(500).json({ error: err2.message });
+
+      res.json({
+        page,
+        per_page,
+        total,
+        total_pages,
+        data: rows
+      });
+    });
   });
 };
 
