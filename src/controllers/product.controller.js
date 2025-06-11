@@ -6,23 +6,48 @@ exports.getAll = (req, res) => {
   const per_page = parseInt(req.query.per_page) > 0 ? parseInt(req.query.per_page) : 10;
   const offset = (page - 1) * per_page;
 
-  db.get('SELECT COUNT(*) as total FROM products', (err, countResult) => {
+  // Filtros possíveis
+  const filters = [];
+  const params = [];
+
+  if (req.query.name) {
+    filters.push('name LIKE ?');
+    params.push(`%${req.query.name}%`);
+  }
+  if (req.query.categoryId) {
+    filters.push('categoryId = ?');
+    params.push(req.query.categoryId);
+  }
+  if (req.query.supplierId) {
+    filters.push('supplierId = ?');
+    params.push(req.query.supplierId);
+  }
+
+  const whereClause = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
+
+  // Conta total com filtro
+  db.get(`SELECT COUNT(*) as total FROM products ${whereClause}`, params, (err, countResult) => {
     if (err) return res.status(500).json({ error: err.message });
 
     const total = countResult.total || 0;
     const total_pages = total > 0 ? Math.ceil(total / per_page) : 1;
 
-    db.all('SELECT * FROM products LIMIT ? OFFSET ?', [per_page, offset], (err2, rows) => {
-      if (err2) return res.status(500).json({ error: err2.message });
+    // Busca paginada com filtro
+    db.all(
+      `SELECT * FROM products ${whereClause} LIMIT ? OFFSET ?`,
+      [...params, per_page, offset],
+      (err2, rows) => {
+        if (err2) return res.status(500).json({ error: err2.message });
 
-      res.json({
-        page,
-        per_page,
-        total,
-        total_pages,
-        data: rows || []
-      });
-    });
+        res.json({
+          page,
+          per_page,
+          total,
+          total_pages,
+          data: rows || []
+        });
+      }
+    );
   });
 };
 
