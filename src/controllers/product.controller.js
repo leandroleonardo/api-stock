@@ -6,33 +6,21 @@ exports.getAll = (req, res) => {
   const per_page = parseInt(req.query.per_page) > 0 ? parseInt(req.query.per_page) : 10;
   const offset = (page - 1) * per_page;
 
-  // Filtros possíveis
-  const filters = [];
-  const params = [];
+  // Filtro simples (exemplo: busca por nome)
+  let whereClause = '';
+  let params = [];
 
-  if (req.query.name) {
-    filters.push('name LIKE ?');
-    params.push(`%${req.query.name}%`);
-  }
-  if (req.query.categoryId) {
-    filters.push('categoryId = ?');
-    params.push(req.query.categoryId);
-  }
-  if (req.query.supplierId) {
-    filters.push('supplierId = ?');
-    params.push(req.query.supplierId);
+  if (req.query.simpleFilter) {
+    whereClause = 'WHERE name LIKE ?';
+    params.push(`%${req.query.simpleFilter}%`);
   }
 
-  const whereClause = filters.length ? `WHERE ${filters.join(' AND ')}` : '';
-
-  // Conta total com filtro
   db.get(`SELECT COUNT(*) as total FROM products ${whereClause}`, params, (err, countResult) => {
     if (err) return res.status(500).json({ error: err.message });
 
     const total = countResult.total || 0;
     const total_pages = total > 0 ? Math.ceil(total / per_page) : 1;
 
-    // Busca paginada com filtro
     db.all(
       `SELECT * FROM products ${whereClause} LIMIT ? OFFSET ?`,
       [...params, per_page, offset],
